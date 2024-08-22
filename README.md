@@ -1,5 +1,5 @@
 # Projeto: Carrinho de Controle Remoto com Arduino
-Apresentação
+### Apresentação
 Bem-vindo ao projeto de construção de um carrinho de controle remoto utilizando a plataforma Arduino. Este projeto tem como objetivo criar um veículo controlado remotamente, capaz de se mover em várias direções e com a possibilidade de adicionar funcionalidades extras, como controle de velocidade e detecção de obstáculos.
 
 ### Objetivo
@@ -20,5 +20,3 @@ Testes e Ajustes: Realizar testes de movimentação e ajustar a programação co
 Adição de Funcionalidades: Implementar novas funcionalidades, como controle de velocidade ou detecção de obstáculos.
 ### Conclusão
 Este projeto é uma maneira divertida e educacional de explorar o mundo da robótica e da programação. Ao final, você terá um carrinho de controle remoto totalmente funcional, construído e programado por você mesmo!
-
-Esse formato de apresentação é mais voltado para descrever a motivação, os objetivos e os próximos passos do projeto, ideal para uma introdução clara e concisa.
