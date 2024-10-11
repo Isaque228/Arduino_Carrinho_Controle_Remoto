@@ -1,12 +1,15 @@
 #include <PS2X_lib.h>  //for v1.6
 #include <Servo.h>
 
-Servo myservo;
-PS2X ps2x; // create PS2 Controller Class
+#define m1a 6
+#define m1b 5
+#define velmotor 3
 
-//right now, the library does NOT support hot pluggable controllers, meaning 
-//you must always either restart your Arduino after you conect the controller, 
-//or call config_gamepad(pins) again after connecting the controller.
+Servo myservo;
+PS2X ps2x;
+
+bool turbo = true;
+int vel = 0;
 int error = 0; 
 byte type = 0;
 byte vibrate = 0;
@@ -14,21 +17,21 @@ byte vibrate = 0;
 void setup(){
  Serial.begin(57600);
 
+ pinMode(velmotor, OUTPUT);
+ pinMode(m1b, OUTPUT);
+ pinMode(m1a, OUTPUT);
  pinMode(5, OUTPUT);
  pinMode(6, OUTPUT);
+ pinMode(8, OUTPUT);
 
 { 
-  myservo.attach(A5);  // attaches the servo on pin 9 to the servo object 
+  myservo.attach(A5);
 } 
- //CHANGES for v1.6 HERE!!! **************PAY ATTENTION*************
   
- error = ps2x.config_gamepad(13,11,10,12, true, true);   //setup pins and settings:  GamePad(clock, command, attention, data, Pressures?, Rumble?) check for error
+ error = ps2x.config_gamepad(13,11,10,12, true, true);
  
  if(error == 0){
    Serial.println("Found Controller, configured successful");
-   Serial.println("Try out all the buttons, X will vibrate the controller, faster as you press harder;");
-  Serial.println("holding L1 or R1 will print out the analog stick values.");
-  Serial.println("Go to www.billporter.info for updates and to report bugs.");
  }
    
   else if(error == 1)
@@ -58,52 +61,38 @@ void setup(){
 }
 
 void loop(){
-   /* You must Read Gamepad to get new values
-   Read GamePad and set vibration values
-   ps2x.read_gamepad(small motor on/off, larger motor strenght from 0-255)
-   if you don't enable the rumble, use ps2x.read_gamepad(); with no values
-   
-   you should call this at least once a second
-   */
-   
-   
-   
- if(error == 1) //skip loop if no controller found
+ if(error == 1)
   return; 
 
 
-  ps2x.read_gamepad(false, vibrate);          //read controller and set large motor to spin at 'vibrate' speed
+  ps2x.read_gamepad(false, vibrate);
   
-  if(ps2x.Button(PSB_START))                   //will be TRUE as long as button is pressed
-       Serial.println("Start is being held");
+  if(ps2x.Button(PSB_START))
+       Serial.println("Start");
   if(ps2x.Button(PSB_SELECT))
-       Serial.println("Select is being held");
+       Serial.println("Select");
        
        
-   if(ps2x.Button(PSB_PAD_UP)) {         //will be TRUE as long as button is pressed
-     Serial.println("Up held this hard");
-//       Serial.println(ps2x.Analog(PSAB_PAD_UP), DEC);
-     digitalWrite(5, HIGH);
-     delay(2000);
-     digitalWrite(5, LOW);
+   if(ps2x.Button(PSB_PAD_UP)) {
+     Serial.println("Up");
     }
     if(ps2x.Button(PSB_PAD_RIGHT)){
-     Serial.println("Right held this hard");
+     Serial.println("Right");
 //        Serial.println(ps2x.Analog(PSAB_PAD_RIGHT), DEC);
-     myservo.write(140);
-     delay(5); 
+     myservo.write(165);
+     delay(2); 
     }
     if(ps2x.Button(PSB_PAD_LEFT)){
      Serial.println("LEFT held this hard");
 //        Serial.println(ps2x.Analog(PSAB_PAD_LEFT), DEC);
-     myservo.write(40);
-     delay(5); 
+     myservo.write(35);
+     delay(2); 
     }
     if(ps2x.Button(PSB_PAD_DOWN)){
      Serial.println("DOWN held this hard");
 //     Serial.println(ps2x.Analog(PSAB_PAD_DOWN), DEC);
-     myservo.write(90);
-     delay(5); 
+     myservo.write(100);
+     delay(2); 
     }   
 
   
@@ -129,19 +118,36 @@ void loop(){
   }   
        
   
-  if(ps2x.ButtonPressed(PSB_RED))             //will be TRUE if button was JUST pressed
+  if(ps2x.Button(PSB_RED)){           //will be TRUE if button was JUST pressed
        Serial.println("Circle just pressed");
-       
-  if(ps2x.ButtonReleased(PSB_PINK))             //will be TRUE if button was JUST released
-       Serial.println("Square just released");     
-  
-  if(ps2x.NewButtonState(PSB_BLUE))            //will be TRUE if button was JUST pressed OR released
+       tone(8,466,50000);
+       delay(250);
+       noTone(8);
+  }
+  if(ps2x.ButtonReleased(PSB_PINK)){             //will be TRUE if button was JUST released
+       Serial.println("Square just released");
+       if(turbo){ 
+         analogWrite(velmotor, 255);
+         digitalWrite(m1a, HIGH);
+         digitalWrite(m1b, LOW);
+         delay(5);
+         turbo = !turbo;
+         Serial.println("LIGADO"); 
+       } else { 
+         analogWrite(velmotor, 255);
+         digitalWrite(m1a, LOW);
+         digitalWrite(m1b, LOW);
+         delay(5);
+         turbo = !turbo;
+         Serial.println("DESLIGADO");
+       }
+  }
+  if(ps2x.NewButtonState(PSB_BLUE)){         //will be TRUE if button was JUST pressed OR released
        Serial.println("X just changed");    
-  
-  
+  }
   if(ps2x.Button(PSB_L1) || ps2x.Button(PSB_R1)) // print stick values if either is TRUE
   {
-      Serial.print("Stick Values:");
+      Serial.print(" Values:");
       Serial.print(ps2x.Analog(PSS_LY), DEC); //Left stick, Y axis. Other options: LX, RY, RX  
       Serial.print(",");
       Serial.print(ps2x.Analog(PSS_LX), DEC); 
@@ -149,8 +155,54 @@ void loop(){
       Serial.print(ps2x.Analog(PSS_RY), DEC); 
       Serial.print(",");
       Serial.println(ps2x.Analog(PSS_RX), DEC); 
+      Serial.print(ps2x.Analog(PSS_RY));
+      
+      if(ps2x.Analog(PSS_RY) < 126 && ps2x.Analog(PSS_RY) > 80) {
+       analogWrite(velmotor, 100);
+       digitalWrite(m1a, HIGH);
+       digitalWrite(m1b, LOW);
+       delay(10);
+       Serial.print("VELOCIDADE 1+");
+      }
+      if(ps2x.Analog(PSS_RY) < 80 && ps2x.Analog(PSS_RY) > 20) {
+       analogWrite(velmotor, 160);
+       digitalWrite(m1a, HIGH);
+       digitalWrite(m1b, LOW);
+       delay(10);
+       Serial.print("VELOCIDADE 2+");
+      }
+      if(ps2x.Analog(PSS_RY) < 20) {
+       analogWrite(velmotor, 210);
+       digitalWrite(m1a, HIGH);
+       digitalWrite(m1b, LOW);
+       delay(10);
+       Serial.print("VELOCIDADE 3+");
+      }
+      if(ps2x.Analog(PSS_RY) < 128 && ps2x.Analog(PSS_RY) > 126){
+       digitalWrite(m1a, LOW);
+       digitalWrite(m1b, LOW);
+      }
+      if(ps2x.Analog(PSS_RY) > 128 && ps2x.Analog(PSS_RY) < 180) {
+       analogWrite(velmotor, 100);
+       digitalWrite(m1a, LOW);
+       digitalWrite(m1b, HIGH);
+       delay(10);
+       Serial.print("VELOCIDADE 1-");
+      }
+      if(ps2x.Analog(PSS_RY) > 180 && ps2x.Analog(PSS_RY) < 240) {
+       analogWrite(velmotor, 160);
+       digitalWrite(m1a, LOW);
+       digitalWrite(m1b, HIGH);
+       delay(10);
+       Serial.print("VELOCIDADE 2-");
+      }
+      if(ps2x.Analog(PSS_RY) > 240) {
+       analogWrite(velmotor, 210);
+       digitalWrite(m1a, LOW);
+       digitalWrite(m1b, HIGH);
+       delay(10);
+       Serial.print("VELOCIDADE 3-");
+      }
   } 
- 
- delay(50);
-     
+ delay(30);    
 }
