@@ -1,96 +1,54 @@
-# Projeto de Carrinho com Arduino e Sensores Ultrassônicos
+# Projeto de Carrinho Controlado por PS2 com Arduino
 
-Este projeto tem como objetivo desenvolver um carrinho controlado por Arduino, equipado com sensores ultrassônicos para detecção de obstáculos e comandos. A seguir está o cronograma detalhado de desenvolvimento, desde o planejamento até os testes finais.
+Este projeto utiliza um **Arduino Uno R3** para controlar um carrinho de controle remoto com um **controle de PS2**. O carrinho é alimentado por duas baterias 18650 e tem as seguintes funcionalidades:
+- Controle da direção usando um **servo motor**
+- Movimento para frente e para trás com um **motor DC** controlado por uma **ponte H**
+- **Buzina** ativada com um **buzzer**
 
-## Sumário
+## Componentes Utilizados
 
-1. [Planejamento](#planejamento)
-2. [Montagem de Hardware](#montagem-de-hardware)
-3. [Desenvolvimento do Software](#desenvolvimento-do-software)
-4. [Testes e Integração](#testes-e-integração)
-5. [Refinamento e Documentação](#refinamento-e-documentação)
+- **Arduino Uno R3**
+- **Servo Motor** para controlar a direção
+- **Ponte H L298N** para controlar o motor DC
+- **Motor DC** para o movimento do carrinho (frente e ré)
+- **Buzzer** como buzina
+- **Carrinho de controle remoto** (estrutura/base)
+- **Controle PS2 wireless** com **receptor**
+- **Duas baterias 18650**
 
-## Planejamento
+## Esquema de Montagem
 
-1. **Definição dos Objetivos**
-   - Determinar as funcionalidades principais do carrinho (movimento, detecção de obstáculos, etc.).
-   - Escolher componentes de hardware (Arduino, motores, sensores ultrassônicos, etc.).
-   
-2. **Desenho do Circuito**
-   - Criar um diagrama esquemático do circuito.
-   - Planejar a distribuição dos componentes no chassi do carrinho.
+- O **servo motor** é conectado ao pino digital do Arduino para controlar a direção.
+- O **motor DC** é controlado pela **ponte H L298N**, que é conectada ao Arduino para controle do movimento (frente e ré).
+- O **buzzer** é conectado a um pino digital do Arduino e usado como buzina.
+- O **controle PS2** envia comandos para o Arduino via o **receptor PS2**, que controla o movimento e a direção do carrinho.
+- As **baterias 18650** fornecem energia para o Arduino e o sistema de motores.
 
-3. **Lista de Materiais**
-   - Listar todos os componentes necessários: Arduino, motores DC, driver de motor, sensores ultrassônicos, baterias, fios, etc.
+## Conexões
 
-## Montagem de Hardware
+ **Modelo das conexões sera criado e publicado em breve**
 
-1. **Preparação do Chassi**
-   - Montar o chassi do carrinho.
-   - Instalar os suportes para o Arduino e os sensores.
+## Funcionalidades
 
-2. **Instalação dos Motores**
-   - Fixar os motores DC ao chassi.
-   - Conectar os motores ao driver de motor.
+- Controle total do carrinho com o **controle PS2**: aceleração, ré e direção.
+- **Buzina** ativada com um botão no controle PS2.
+- **Direção** controlada por um **servo motor**.
 
-3. **Instalação dos Sensores Ultrassônicos**
-   - Posicionar os sensores ultrassônicos na frente do carrinho.
-   - Conectar os sensores ao Arduino.
+## Como Usar
 
-4. **Conexão do Arduino**
-   - Fixar o Arduino ao chassi.
-   - Conectar o Arduino aos sensores e ao driver de motor.
+1. Monte o circuito conforme o esquema de montagem.
+2. Faça o upload do código para o **Arduino Uno R3**.
+3. Ligue o carrinho com as **baterias 18650**.
+4. Use o **controle PS2** para controlar o carrinho.
 
-5. **Verificação de Conexões**
-   - Revisar todas as conexões para garantir que estão corretas e seguras.
+## Dependências
 
-## Desenvolvimento do Software
+Para rodar o código, você precisará das seguintes bibliotecas no Arduino IDE:
 
-1. **Configuração Inicial do Arduino**
-   - Configurar o ambiente de desenvolvimento (Arduino IDE).
-   - Instalar bibliotecas necessárias para controle de motores e sensores ultrassônicos.
+- Biblioteca **Servo.h** para controle do servo motor.
+- Biblioteca **PS2X_lib** para comunicação com o controle PS2.
+- Biblioteca **AFMotor** para controle da ponte H (se necessário).
 
-2. **Desenvolvimento do Código Base**
-   - Escrever o código para controle básico dos motores.
-   - Desenvolver código para leitura de sensores ultrassônicos.
+## Alimentação
 
-3. **Implementação de Lógica de Desvio de Obstáculos**
-   - Programar lógica para o carrinho desviar de obstáculos detectados pelos sensores ultrassônicos.
-
-4. **Integração dos Módulos**
-   - Integrar o controle de motores com a leitura dos sensores ultrassônicos para movimento autônomo.
-
-5. **Teste de Software em Simulação**
-   - Simular o código no ambiente de desenvolvimento para verificar a lógica básica.
-
-## Testes e Integração
-
-1. **Teste de Motores**
-   - Testar os motores individualmente para verificar funcionamento e direção.
-
-2. **Teste dos Sensores Ultrassônicos**
-   - Testar a leitura dos sensores ultrassônicos para garantir a detecção correta de obstáculos.
-
-3. **Teste de Integração**
-   - Executar o código completo no carrinho para testar a integração de todos os componentes.
-
-4. **Ajustes Finais**
-   - Ajustar parâmetros de controle e sensibilidade conforme necessário.
-
-## Refinamento e Documentação
-
-1. **Refinamento do Código**
-   - Otimizar o código para eficiência e clareza.
-   - Adicionar comentários e documentar todas as funções.
-
-2. **Documentação do Projeto**
-   - Criar documentação detalhada sobre o hardware e software utilizados.
-   - Elaborar um guia de montagem para futuros desenvolvedores.
-
-3. **Teste Final e Demonstração**
-   - Realizar um teste final em ambiente controlado.
-   - Demonstrar o funcionamento do carrinho com todos os componentes integrados.
-
-## Conclusão
-
-Este projeto de carrinho com Arduino é uma excelente introdução ao desenvolvimento de sistemas robóticos autônomos. Seguindo o cronograma e os passos acima, é possível criar um protótipo funcional, aprendendo sobre eletrônica, programação e integração de sistemas ao longo do caminho.
+O projeto utiliza duas baterias 18650, que são conectadas diretamente ao Arduino para alimentar todos os componentes. Verifique a polaridade correta ao conectar as baterias.
